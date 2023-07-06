@@ -73,6 +73,21 @@ func (rgb RGB) HSL() HSL {
 	return HSL{hue, sat * 100, lightness * 100}.Normalize()
 }
 
+func (rgb RGB) Mix(c RGB) RGB {
+	r1 := float32(rgb.R)
+	r2 := float32(c.R)
+	g1 := float32(rgb.G)
+	g2 := float32(c.G)
+	b1 := float32(rgb.B)
+	b2 := float32(c.B)
+
+	return RGB{
+		uint8((r1+r2)/2 + 0.5),
+		uint8((g1+g2)/2 + 0.5),
+		uint8((b1+b2)/2 + 0.5),
+	}
+}
+
 type RGBHex struct {
 	Hex string
 }
@@ -106,6 +121,55 @@ func (hsl HSL) String() string {
 	return fmt.Sprintf("hsl(%d, %.1f, %.1f)", hsl.H, hsl.S, hsl.L)
 }
 
+func (hsl HSL) RGB() RGB {
+	s := hsl.S / 100
+	l := hsl.L / 100
+	h := hsl.H / 60
+
+	c := float32((1 - math.Abs(float64((2*l - 1)))) * float64(s))
+	x := (c * float32(1-math.Abs(float64((h%2)-1))))
+	m := l - c/2
+
+	var r, g, b float32
+
+	switch {
+	case hsl.H < 60:
+		r = c
+		g = x
+		b = 0
+	case hsl.H < 120:
+		r = x
+		g = c
+		b = 0
+	case hsl.H < 180:
+		r = 0
+		g = c
+		b = x
+	case hsl.H < 240:
+		r = 0
+		g = x
+		b = c
+	case hsl.H < 300:
+		r = x
+		g = 0
+		b = c
+	default:
+		r = c
+		g = 0
+		b = x
+	}
+
+	r = (r+m)*255 + 0.5
+	g = (g+m)*255 + 0.5
+	b = (b+m)*255 + 0.5
+
+	return RGB{
+		uint8(r),
+		uint8(g),
+		uint8(b),
+	}
+}
+
 func (hsl HSL) Normalize() HSL {
 	return HSL{
 		hsl.H,
@@ -114,6 +178,11 @@ func (hsl HSL) Normalize() HSL {
 	}
 }
 
-func (hsl HSL) RGB() RGB {
-	return RGB{}
+func ConvertToPastel(rgb RGB) RGB {
+	hsl := rgb.HSL()
+	hsl.S += 10
+
+	rgb = hsl.RGB()
+
+	return rgb.Mix(RGB{255, 255, 255})
 }
