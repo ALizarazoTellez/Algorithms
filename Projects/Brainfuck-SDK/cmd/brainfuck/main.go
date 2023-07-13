@@ -4,7 +4,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/ALizarazoTellez/Algorithms/Languages/Brainfuck/SDK/pkg/bf"
+	"github.com/ALizarazoTellez/Algorithms/Projects/Brainfuck-SDK/pkg/bf"
 )
 
 func main() {

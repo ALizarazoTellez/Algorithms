@@ -1,0 +1,9 @@
+
+# Bible files (I cannot publish them due to copyright issues).
+data/
+
+# Out files.
+*.csv
+
+# Test files.
+test/

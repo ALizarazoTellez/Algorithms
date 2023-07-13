@@ -1,0 +1,6 @@
+
+# Out files.
+*.csv
+
+# Test Lyrics.
+Lyrics/
