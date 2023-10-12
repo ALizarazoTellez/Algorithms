@@ -22,26 +22,37 @@ Cada llamada al sistema tiene un número asignado, este número se debe enviar a
  - r8: Quinto argumento.
  - r9: Sexto argumento.
 
+El valor de retorno se almacena en **rax**.
+
 ### Funciones útiles
 
 #### Función `read`
 
- - Número de llamada al sistema: 0 (para read).
- - Primer argumento: Descriptor de archivo (ejemplo: stdin para entrada estándar).
- - Segundo argumento: Dirección de memoria donde se almacenarán los datos leídos.
- - Tercer argumento: Cantidad de bytes a leer.
+ - Número de llamada al sistema: 0
+ - Parámetros:
+ - rdi: Descriptor de archivo (por ejemplo, stdin, etc.).
+ - rsi: Dirección de memoria del búfer donde se almacenarán los datos leídos.
+ - rdx: Cantidad de bytes a leer.
+ - Acción: Lee datos desde el descriptor de archivo especificado en rdi y los almacena en el búfer apuntado por rsi.
+ - Valor de retorno: El valor de retorno en rax contiene el número de bytes leídos, o un valor negativo en caso de error. Además, los datos leídos se almacenan en el búfer apuntado por rsi.
 
 #### Función `write`
 
- - Registro rax contiene el número de llamada al sistema para write, que es 1.
- - Registro rdi contiene el descriptor de archivo (file descriptor).
- - Registro rsi contiene la dirección de la memoria donde se encuentra el mensaje que se va a escribir.
- - Registro rdx contiene la longitud del mensaje.
+ - Número de llamada al sistema: 1
+ - Parámetros:
+ - rdi: Descriptor de archivo (por ejemplo, stdout, stderr, etc.).
+ - rsi: Dirección de memoria del búfer de datos a escribir.
+ - rdx: Cantidad de bytes a escribir.
+ - Acción: Escribe los datos desde el búfer apuntado por rsi en el descriptor de archivo especificado en rdi.
+ - Valor de retorno: El valor de retorno en rax contiene el número de bytes escritos, o un valor negativo en caso de error.
 
 #### Función `exit`
 
- - Número de llamada al sistema: 60 (para exit).
- - Primer argumento: Código de salida (un valor entero que indica el estado de salida).
+ - Número de llamada al sistema: 60
+ - Parámetros:
+ - rdi: Código de salida (un valor entero que indica el estado de salida).
+ - Acción: Termina el programa y retorna un código de salida al sistema operativo.
+ - Valor de retorno: No se espera que exit retorne, ya que finaliza la ejecución del programa. El código de salida especificado en rdi se utiliza para indicar el resultado de la ejecución del programa al sistema operativo.
 
 Por alguna razón las personas prefieren usar `xor rdi, rdi` (en **XOR**, cuando dos booleanos son el mismo, da falso, que en ensamblador es cero), en lugar de `mov rdi, 0`.
 
