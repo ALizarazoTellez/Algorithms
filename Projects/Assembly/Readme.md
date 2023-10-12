@@ -7,6 +7,8 @@ Práctica en lenguaje ensamblador. Aquí añadiré los conceptos que vaya aprend
 
 ## Resumen
 
+Si estás haciendo un programa principal (es decir, el equivalente a `main` en otros lenguajes), recuerda llamar siempre a la función `exit`, porque de lo contrario el S.O. le enviará la señal 11 al programa (_segmentation fault_).
+
 ### Funciones de ensamblador
 
 Cada llamada al sistema tiene un número asignado, este número se debe enviar al registro **rax**, después de le envían los argumentos en el correspondiente registro y se ejecuta **syscall**.
@@ -20,17 +22,68 @@ Cada llamada al sistema tiene un número asignado, este número se debe enviar a
  - r8: Quinto argumento.
  - r9: Sexto argumento.
 
+### Funciones útiles
+
+#### Función `read`
+
+ - Número de llamada al sistema: 0 (para read).
+ - Primer argumento: Descriptor de archivo (ejemplo: stdin para entrada estándar).
+ - Segundo argumento: Dirección de memoria donde se almacenarán los datos leídos.
+ - Tercer argumento: Cantidad de bytes a leer.
+
+#### Función `write`
+
+ - Registro rax contiene el número de llamada al sistema para write, que es 1.
+ - Registro rdi contiene el descriptor de archivo (file descriptor).
+ - Registro rsi contiene la dirección de la memoria donde se encuentra el mensaje que se va a escribir.
+ - Registro rdx contiene la longitud del mensaje.
+
+#### Función `exit`
+
+ - Número de llamada al sistema: 60 (para exit).
+ - Primer argumento: Código de salida (un valor entero que indica el estado de salida).
+
+Por alguna razón las personas prefieren usar `xor rdi, rdi` (en **XOR**, cuando dos booleanos son el mismo, da falso, que en ensamblador es cero), en lugar de `mov rdi, 0`.
+
 ### Almacenamiento de datos
 
 Estos van en la sección `.data`, la sintaxis para cada dato es:
 
 ```nasm
-section .data
-    buffer db 100 ; Reservar espacio.
-    hello db 'Hola Mundo!', 0 ; Definir cadena de caracteres.
+    section .data
+
+buffer:
+    db 100 ; Reservar espacio.
+
+hello:
+    db 'Hola Mundo!', 0 ; Definir cadena de caracteres.
+    hello_size equ $ - hello ; Tamaño de la cadena «hello».
 ```
 
 Literalmente cada _byte_ va separado por una coma.
+
+Por alguna razón que ignoro, no se puede usar la sintaxis de dos puntos para definir etiquetas con `equ`...
+
+Una breve diferencia entre `db` y `equ`:
+
+
+1. **`db` (Define Byte):**
+   - Propósito: `db` se utiliza para definir y reservar espacio para datos en memoria. Es comúnmente utilizado para declarar constantes, como cadenas de caracteres, bytes individuales o matrices de bytes.
+   - Ejemplo:
+     ```nasm
+     my_byte db 42      ; Define una constante de byte con valor 42
+     my_string db 'Hello, world!',0  ; Define una cadena de caracteres terminada en null
+     ```
+
+2. **`equ` (EQUate):**
+   - Propósito: `equ` se utiliza para definir constantes simbólicas. No reserva espacio en memoria, pero asigna un valor constante a un símbolo que puede ser utilizado en otras partes del código para mayor claridad y mantenimiento. Es una directiva utilizada en tiempo de ensamblaje para reemplazar un valor simbólico por su valor constante.
+   - Ejemplo:
+     ```nasm
+     MY_CONSTANT equ 42     ; Define una constante simbólica llamada MY_CONSTANT con valor 42
+
+     ; Uso de la constante simbólica
+     mov rax, MY_CONSTANT  ; Equivale a mov rax, 42
+     ```
 
 ## Notas
 

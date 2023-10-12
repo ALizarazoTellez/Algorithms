@@ -9,7 +9,7 @@ src := "src/"
 tmpObjFile := "./.tmp.o"
 tmpBinFile := "./.tmp.bin"
 
-run file="main.asm": format (build file)
+run file="main.asm": (build file)
     @./{{ tmpBinFile }}
 
 build file: clean
