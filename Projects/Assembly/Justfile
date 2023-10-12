@@ -1,0 +1,25 @@
+
+asm := "nasm"
+linker := "ld"
+
+format := "elf64"
+
+src := "src/"
+
+tmpObjFile := "./.tmp.o"
+tmpBinFile := "./.tmp.bin"
+
+run file="main.asm": format (build file)
+    @./{{ tmpBinFile }}
+
+build file: clean
+    @{{ asm }} -f {{ format }} -o {{ tmpObjFile }} {{ join(src, file) }}
+    @{{ linker }} -o {{ tmpBinFile }} {{ tmpObjFile }}
+
+clean:
+    -@rm {{ tmpObjFile }} {{ tmpBinFile }} 2> /dev/null
+
+format:
+    @for file in `find {{ src }} -name '*.asm'`; do \
+    nasmfmt $file; \
+    done
