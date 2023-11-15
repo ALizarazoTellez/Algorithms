@@ -14,17 +14,20 @@
     with pkgs; {
       devShells."${system}".default = mkShell {
         packages = [
-		  nasmfmt
+          # For Nix formatting.
+          alejandra
+
+          nasmfmt
           just
         ];
 
         buildInputs = [
-		  binutils
+          binutils
           nasm
         ];
 
         shellHook = ''
-          go version
+          nasm --version
         '';
       };
     };
