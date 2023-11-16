@@ -4,3 +4,10 @@
 
 # Test Lyrics.
 Lyrics/
+
+# Decks.
+Out/
+Decks/
+
+# Words that I know.
+know-words.txt
