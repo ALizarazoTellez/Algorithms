@@ -131,9 +131,12 @@ def simplify_word(word: str) -> str:
     """Return a word without punctuation signs."""
 
     PUNCTUATION = {
-        '.',
+        # Dot or suspensive dots.
+        '.', '..',
         ',',
-        '"',
+        # Open and Close.
+        '"', '"',
+        '(', ')',
         # The character `'` is used for contractions in the English language.
         # "'",
         '¿', '?',
