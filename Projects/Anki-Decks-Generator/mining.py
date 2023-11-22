@@ -32,8 +32,10 @@ def main(*args) -> int:
 
     learn_phrases = []
 
+    ignored_words = set()
+
     for phrase in phrases:
-        words = unknown_words(phrase, know_words)
+        words = unknown_words(phrase, know_words, ignored_words)
 
         if len(words) == 0:
             continue
@@ -49,6 +51,8 @@ def main(*args) -> int:
             learn_phrases.append(phrase)
 
         know_words.update(words - new_unknown_words)
+
+        ignored_words = ignored_words.union(new_unknown_words)
 
     save_words(KNOW_WORDS_FILE, know_words)
     save_phrases(args[2], learn_phrases)
@@ -92,14 +96,19 @@ def save_phrases(path: str, phrases: set[str]):
             file.write(phrase + '\n')
 
 
-def unknown_words(phrase: str, words: tuple[str]) -> set[str]:
+def unknown_words(phrase: str, words: tuple[str], ignored: set[str]) -> set[str]:
     unknown = set()
 
     phrase_words = phrase.split()
 
     for word in phrase_words:
+        word = simplify_word(word)
+
+        if word in ignored:
+            continue
+
         if word not in words:
-            unknown.add(simplify_word(word))
+            unknown.add(word)
 
     return unknown
 
@@ -134,7 +143,7 @@ def simplify_word(word: str) -> str:
     for punctuation in PUNCTUATION:
         word = word.replace(punctuation, '', 1)
 
-    return word
+    return word.lower()
 
 
 if __name__ == '__main__':
