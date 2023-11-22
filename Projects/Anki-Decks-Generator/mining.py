@@ -23,6 +23,10 @@ KNOW_WORDS_FILE = './know-words.txt'
 def main(*args) -> int:
     """Main routine."""
 
+    if len(args) != 3:
+        print("Args: phrases_source mining_phrases")
+        return 1
+
     know_words = load_words(KNOW_WORDS_FILE)
     phrases = load_phrases(args[1])
 
@@ -95,7 +99,7 @@ def unknown_words(phrase: str, words: tuple[str]) -> set[str]:
 
     for word in phrase_words:
         if word not in words:
-            unknown.add(word)
+            unknown.add(simplify_word(word))
 
     return unknown
 
@@ -109,10 +113,29 @@ def check_unknown_words(words: tuple[str]) -> set[str]:
         if decision.lower() == 'y':
             continue
 
-        unknown.add(word)
+        unknown.add(simplify_word(word))
 
     return unknown
 
 
+def simplify_word(word: str) -> str:
+    """Return a word without punctuation signs."""
+
+    PUNCTUATION = {
+        '.',
+        ',',
+        '"',
+        # The character `'` is used for contractions in the English language.
+        # "'",
+        '¿', '?',
+        '¡', '!',
+    }
+
+    for punctuation in PUNCTUATION:
+        word = word.replace(punctuation, '', 1)
+
+    return word
+
+
 if __name__ == '__main__':
-    main(*sys.argv)
+    exit(main(*sys.argv))
