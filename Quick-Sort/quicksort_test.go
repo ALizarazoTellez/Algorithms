@@ -1,6 +1,7 @@
 package quicksort_test
 
 import (
+	"math/rand/v2"
 	"slices"
 	"testing"
 
@@ -38,4 +39,33 @@ func TestQuickSort(t *testing.T) {
 			}
 		})
 	}
+}
+
+func BenchmarkQuickSort_Custom(b *testing.B) {
+	slice := makeSlice()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		quicksort.QuickSort(slice)
+	}
+}
+
+func BenchmarkQuickSort_Stdlib(b *testing.B) {
+	slice := makeSlice()
+	b.ResetTimer()
+
+	for i := 0; i < b.N; i++ {
+		slices.Sort(slice)
+	}
+}
+
+func makeSlice() []int {
+	rand := rand.NewPCG(0, 0).Uint64
+
+	slice := make([]int, 100)
+	for i := range slice {
+		slice[i] = int(rand())
+	}
+
+	return slice
 }
