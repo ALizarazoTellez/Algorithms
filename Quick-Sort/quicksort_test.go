@@ -19,6 +19,7 @@ func TestQuickSort(t *testing.T) {
 		{"right max", []int{4, 2, 6, 8, 3, 1, 5, 7, 0, 9}},
 		{"ordered", []int{1, 2, 3, 4, 5}},
 		{"reversed", []int{5, 4, 3, 2, 1}},
+		{"large", makeSlice()},
 	}
 
 	for _, test := range testdata {
